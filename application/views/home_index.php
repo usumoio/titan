@@ -1,9 +1,7 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>/css/home.css"/>
  
-<h1>We Were Kings Once</h1>
-
-<p>Simple test</p>
+<h2>We Were Kings Once</h2>
 
 <a href="<?php echo site_url('home/connect_four') ?>">connect four</a>
 
