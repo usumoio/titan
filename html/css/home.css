@@ -1,0 +1,175 @@
+/*This CSS file manages the admin section of Skedj*/
+
+
+/*This manages the way links look in the admin section*/
+.base_link:link{ color: black; text-decoration: none; font-family: sans-serif;}
+.base_link:visited{ color: green; text-decoration: none; font-family: sans-serif;}
+.base_link:hover{ color: blue; text-decoration: underline; font-family: sans-serif;}
+
+/*This section of the document is managing headers*/
+h1{font-family: sans-serif; color: #04B404; font-size: 400%;}
+h2{font-family: sans-serif;}
+h3{font-family: sans-serif;}
+h4{font-family: sans-serif;}
+h5{font-family: sans-serif;}
+h6{font-family: sans-serif;}
+
+/*This section of the document manages the body of the document and general page display style*/
+body{margin:10px; padding:0px;}
+
+#main_display{
+	width:750px;
+	margin:0px auto;
+	text-align:left;
+	padding:14px;
+	border: outset #04B404;
+	border-width: 7px;
+	background-color:#eee;
+}
+
+#log_out{
+	text-align:center;
+}
+
+.main_title
+{
+	font-family: sans-serif; 
+	font-size: 255%;
+}
+
+.image_border
+{
+	padding-top:15px;
+	padding-bottom:15px;
+	padding-left:15px;
+	padding-right:15px;
+}
+
+.event_edit_link
+{
+	position: absolute;
+	right: 730px;
+	top: 115px;
+}
+
+.feed_edit_link
+{
+	position: absolute;
+	right: 690px;
+	top: 115px;
+}
+
+.delete_button
+{
+	position: absolute;
+	right: 550px;
+	top: 115px;
+}
+
+.feed_return_link
+{
+	position: absolute;
+	top:115px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+.link_as_button 
+{
+	border-top: 1px solid #96d1f8;
+	background: #116b17;
+	background: -webkit-gradient(linear, left top, left bottom, from(#7df266), to(#116b17));
+	background: -webkit-linear-gradient(top, #7df266, #116b17);
+	padding: 9px 18px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	color: white;
+	font-size: 16px;
+	font-family: sans-serif;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+.link_as_button:hover 
+{
+	border-top-color: #15bf72;
+	background: #15bf72;
+	color: #000000;
+}
+
+.link_as_button:active 
+{
+	border-top-color: #1b435e;
+	background: #1b435e;
+}
+   
+.button_as_button 
+{
+	border-top: 1px solid #96d1f8;
+	background: #116b17;
+	background: -webkit-gradient(linear, left top, left bottom, from(#7df266), to(#116b17));
+	background: -webkit-linear-gradient(top, #7df266, #116b17);
+	padding: 9px 18px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	color: white;
+	font-size: 16px;
+	font-family: sans-serif;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+.button_as_button:hover 
+{
+	border-top-color: #15bf72;
+	background: #15bf72;
+	color: #ccc;
+}
+
+.button_as_button:active 
+{
+	border-top-color: #1b435e;
+	background: #1b435e;
+}
+   
+.logout_nonsense{margin-top:1000px;}
+
+.logout_as_button 
+{
+	position: relative;
+	top:15px;
+	border-top: 1px solid #96d1f8;
+	background: #116b17;
+	background: -webkit-gradient(linear, left top, left bottom, from(#7df266), to(#116b17));
+	background: -webkit-linear-gradient(top, #7df266, #116b17);
+	padding: 8px 22px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+	box-shadow: rgba(0,0,0,1) 0 1px 0;
+	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	color: white;
+	font-size: 26px;
+	font-family: sans-serif;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+.logout_as_button:hover 
+{
+	border-top-color: #15bf72;
+	background: #15bf72;
+	color: #ccc;
+}
+
+.logout_as_button:active 
+{
+	border-top-color: #1b435e;
+	background: #1b435e;
+} 
