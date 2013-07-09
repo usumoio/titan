@@ -58,8 +58,6 @@
 			}
 			unset($q);
 			
-			$this->debug($move_weight_array, "This is the move weight array", 0);
-
 			//choose your move based on the wieghted average all your progress
 			for($u = 0; $u < $this->board_length; $u++)
 			{
@@ -73,6 +71,8 @@
 			// TODO the start of the weight contant will need to be something better
 			$weight_constant = -1;
 			$move_to_send = 0;
+					
+			$this->debug($move_weight_array);		
 						
 			// based on the results of the move decided select the best move
 			for($t = 0; $t < $this->board_length; $t++) 
@@ -123,20 +123,48 @@
 			
 			unset($i);
 			
+			//$this->debug($score_agregate, "score_agregate at a level: " . $depth);
+			//$this->debug($game_boards_generated_at_this_level[0]->score_array, 'score array', 1);
+			
 			// check to see if there are more moves of if it is time to return
 			foreach($game_boards_generated_at_this_level as $game_state)
 			{
+				// if($game_state->score_array[0] >= 1)
+				// {
+					// $this->debug("index 0");
+					// $this->debug($active_player, "active player");
+					// $this->debug($game_state->score_array[0], "match", 0);
+					// $this->debug($game_state->score_array, "this is the score array", 1);
+				// }
+				// if($game_state->score_array[1] >= 1)
+				// {
+					// $this->debug("index 1");
+					// $this->debug($active_player, "active player");
+					// $this->debug($game_state->score_array[1], "match", 0);
+					// $this->debug($game_state->score_array, "this is the score array", 1);
+				// }
+				// if($game_state->score_array[2] >= 1)
+				// {
+					// $this->debug("index 2");	
+					// $this->debug($active_player, "active player");
+					// $this->debug($game_state->score_array[2], "match", 0);
+					// $this->debug($game_state->score_array, "this is the score array", 1);
+				// }
+				
 				//compute the agragate of the scores only for player two (AI)
-				if($active_player == 2)
+				if($active_player === 2)
 				{
+					//THE WAY SCORES ARE AGREGATED HERE IS WRONG
 					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[0]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];				
-				} else if($active_player == 1) {
+					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[2];				
+				} else if($active_player === 1) {
+					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[2]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];
 					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[0]; 
 				}
 			}
-			
+			$this->debug($score_agregate, "score agregate");
 			return $score_agregate;
 		}
 		
@@ -166,7 +194,7 @@
 					{
 						$return_object->score_array = array(0, 1, 0);
 					} else if($test_for_complete === 'x'){
-						$this->debug('victory assigned X');						
+						$dump_test = 1;						
 						$return_object->score_array = array(0, 0, 1);
 					} else {
 						$return_object->score_array = array(0, 0, 0);						
@@ -176,7 +204,6 @@
 					{
 						$return_object->score_array = array(0, 1, 0);
 					} else if($test_for_complete === 'o'){
-						$this->debug('victory assigned O');						
 						$return_object->score_array = array(1, 0, 0);
 					} else {						
 						$return_object->score_array = array(0, 0, 0);						
@@ -184,6 +211,7 @@
 				} else {
 					$this->debug('fuck', '', 1);
 				}
+								
 				return $return_object;
 			}
 			
@@ -229,13 +257,10 @@
 			// this is a draw
 			if($test_for_complete === -1)
 			{
-				$this->debug('draw assigned');
 				$return_object->score_array = array(0, 1, 0);
 			} else if($test_for_complete === 'o') {
-				$this->debug('victory assigned O');
 				$return_object->score_array = array(1, 0, 0);
 			} else if($test_for_complete === 'x') {
-				$this->debug('victory assigned X');
 				$return_object->score_array = array(0, 0, 1);
 			} else {
 				$return_object->score_array = array(0, 0, 0);
