@@ -1,3 +1,10 @@
 
 # This is the titan project gitignore file
+
+# this section includes general files that should be ignored
 *.txt
+.project
+*.csv
+
+# these are general places to ignore in this project
+.settings/
