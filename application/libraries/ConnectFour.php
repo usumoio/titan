@@ -17,6 +17,7 @@
 		
 		public function ai_player_move($game_array, $active_players_move)
 		{
+			// la lalllallalllalalalla alvl  a a alala al a la
 			$this->game_array = $game_array;			
 			$this->game_array = $this->calculate_ai_move($active_players_move);
 			return $this->game_array;	
