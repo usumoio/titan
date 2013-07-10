@@ -1,5 +1,11 @@
-
 # This is the titan project gitignore file
+
+# this is codeigniter specific stuff
+*/config/development
+*/logs/log-*.php
+*/logs/!index.html
+*/cache/*
+*/cache/!index.html
 
 # this section includes general files that should be ignored
 *.txt
@@ -8,3 +14,4 @@
 
 # these are general places to ignore in this project
 .settings/
+
