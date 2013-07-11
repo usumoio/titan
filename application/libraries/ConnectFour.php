@@ -13,7 +13,7 @@
 		public $board_width 	= 7;
 		public $board_length	= 7;
 		public $game_array 		= array();
-		public $depth_limit 	= 4;
+		public $depth_limit 	= 5;
 		
 		public function ai_player_move($game_array, $active_players_move)
 		{
@@ -51,7 +51,8 @@
 				}
 				
 				if($prime_game_board[$q] !== FALSE) {
-					$move_weight_array[] = $this->ai_move_helper($prime_game_board[$q], 2, 0);				
+					$move_weight_array[] = $this->ai_move_helper($prime_game_board[$q], 2, 0);	
+					//$this->debug('a score aggregate should have been recorded');			
 				} else {
 					$move_weight_array[] = FALSE;
 				}
@@ -61,7 +62,13 @@
 			//choose your move based on the wieghted average all your progress
 			for($u = 0; $u < $this->board_length; $u++)
 			{
-				if($move_weight_array[$u]) {
+				if($move_weight_array[$u] !== FALSE) {
+					
+					$this->debug($move_weight_array[$u]);
+					$this->debug($move_weight_array[$u][0], "0");
+					$this->debug($move_weight_array[$u][1], "1");
+					$this->debug($move_weight_array[$u][2], "2");
+					
 					$weight_array[] = ($move_weight_array[$u][0] * 5) + ($move_weight_array[$u][1] * 2) - ($move_weight_array[$u][2] * 5); 				
 				} else {
 					$weight_array[] = FALSE;
@@ -72,7 +79,8 @@
 			$weight_constant = -1;
 			$move_to_send = 0;
 					
-			$this->debug($move_weight_array);		
+			$this->debug($move_weight_array, "this is the move weight array");		
+			$this->debug($weight_array, "this is the weight array");		
 						
 			// based on the results of the move decided select the best move
 			for($t = 0; $t < $this->board_length; $t++) 
@@ -154,17 +162,19 @@
 				//compute the agragate of the scores only for player two (AI)
 				if($active_player === 2)
 				{
+					// $this->debug('adding for player two');
 					//THE WAY SCORES ARE AGREGATED HERE IS WRONG
 					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[0]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];				
 					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[2];				
 				} else if($active_player === 1) {
+					// $this->debug('adding for player one');
 					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[2]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];
 					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[0]; 
 				}
 			}
-			$this->debug($score_agregate, "score agregate");
+			//$this->debug($score_agregate, "score agregate");
 			return $score_agregate;
 		}
 		
