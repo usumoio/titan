@@ -74,7 +74,10 @@
 	<input type="hidden" name="game_board" value="<?php echo htmlspecialchars($json_board) ?>" />
 	<input type="hidden" name="moves_so_far" value="<?php echo $moves_so_far ?>" />
 	<input type="hidden" name="active_players_move" value="<?php echo $active_players_move ?>" />
-	<input type="submit" value="submit" />
+	<input type="submit" value="Submit" />
+</form>
+<form name="connect_four_reset" action="connect_four_reset" method="post">
+	<input type="submit" value="Reset Board" />
 </form>
 
 <?php // echo $moves_so_far ?>

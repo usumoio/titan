@@ -228,6 +228,12 @@
 			$view_data['winner_declared']		= $winner_declared;
 			$this->load->view('connect_four', $view_data);
 		}
+
+		public function connect_four_reset() 
+		{
+			$_POST = array();
+			$this->connect_four();
+		}
 		
 		private function apply_move($move, $active_players_move)
 		{
