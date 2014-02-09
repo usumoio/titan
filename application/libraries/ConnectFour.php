@@ -8,6 +8,7 @@
 			// these are expensive opperations this will give the server enough time
 			set_time_limit(0);
 			ini_set('memory_limit', '2048M');
+			$this->load->helper('dev');
 		}
 		
 		public $board_width 	= 7;
@@ -290,135 +291,7 @@
 			}
 		}
 		
-		public function check_for_winner_or_draw($game_array, $active_player_move)
-		{
-			$present_possible_winner 	= "";
-			$count_to_win 				= 0;
-			$game_not_a_draw			= FALSE;
-			
-			for($i = 0; $i < $this->board_length; $i++)
-			{
-				for($j = 0; $j < $this->board_width; $j++)
-				{
-					// start checking for a winner
-					if($game_array[$i][$j] !== "_")
-					{
-						$present_possible_winner = $game_array[$i][$j]; 
-						
-						// check for a winner horizontally
-						for($x = 0; $x < 4; $x++)
-						{
-							if($j+$x < $this->board_width)
-							{
-								if($game_array[$i][$j+$x] === $present_possible_winner)
-								{
-									$count_to_win = $count_to_win + 1;
-								}
-							}
-						}
-						
-						if($count_to_win > 3)
-						{
-							return $present_possible_winner;	// this player has won
-						} else {
-							$count_to_win = 0;
-						}
-						
-						// check for a winner horizontally
-						for($y = 0; $y < 4; $y++)
-						{
-							if($i+$y < $this->board_width)
-							{
-								if($game_array[$i+$y][$j] === $present_possible_winner)
-								{
-									$count_to_win = $count_to_win + 1;
-								}
-							}
-						}
-						
-						if($count_to_win > 3)
-						{
-							return $present_possible_winner;	// this player has won
-						} else {
-							$count_to_win = 0;
-						}
-						
-						// check for a winner up to down diagonal
-						for($z = 0; $z < 4; $z++)
-						{
-							if(($i+$z < $this->board_width) && ($j+$z < $this->board_length))
-							{
-								if($game_array[$i+$z][$j+$z] === $present_possible_winner)
-								{
-									$count_to_win = $count_to_win + 1;
-								}
-							}
-						}
-						
-						if($count_to_win > 3)
-						{
-							return $present_possible_winner;	// this player has won
-						} else {
-							$count_to_win = 0;
-						}
-						
-						// check for a winner down to up diagonal
-						for($w = 0; $w < 4; $w++)
-						{
-							if(($i+$w < $this->board_width) && ($j-$w >= 0))
-							{
-								if($game_array[$i+$w][$j-$w] === $present_possible_winner)
-								{
-									$count_to_win = $count_to_win + 1;
-								}
-							}
-						}
-						
-						if($count_to_win > 3)
-						{
-							return $present_possible_winner;	// this player has won
-						} else {
-							$count_to_win = 0;
-						}
-					}
-				}
-			}
-
-			// check for a drawed game and return accordingly
-			for($i = 0; $i < $this->board_length; $i++)
-			{
-				for($j = 0; $j < $this->board_width; $j++)
-				{
-					if($game_array[$i][$j] === "_")
-					{
-						$game_not_a_draw = TRUE;
-					}
-				}
-			}
-			
-			if(!$game_not_a_draw)
-			{
-				return -1;
-			}
-			
-			return 0;
-		}
 		
-		public function debug($value = NULL, $name = NULL, $exit = NULL)
-		{
-			if(!empty($name))
-			{
-				echo $name . "<br />";				
-			}
-			echo "<pre>";
-			var_dump($value);
-			echo "</pre>";
-			
-			if($exit)
-			{
-				exit;
-			}
-		}
 		
 	}
 

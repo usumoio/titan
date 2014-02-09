@@ -117,22 +117,5 @@
 		{
 			$this->load->view('api_display');
 		}
-	
-	
-		
-		public function debug($value = NULL, $name = NULL, $exit = NULL)
-		{
-			if(!empty($name))
-			{
-				echo $name . "<br />";				
-			}
-			echo "<pre>";
-			var_dump($value);
-			echo "</pre>";
-			
-			if($exit)
-			{
-				exit;
-			}
-		}
+
 	}
