@@ -41,7 +41,7 @@
 #$route['default_controller'] 		= "welcome";
 
 //$route['default_controller'] 		= "calendar/index";
-$route['connectfour']				= "home/connect_four";
+$route['connectfour']				= "connect_four/game";
 $route['default_controller'] 		= "home/index";
 $route['404_override'] 				= '';
 $route['none']						= "";

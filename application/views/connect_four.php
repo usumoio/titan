@@ -61,7 +61,7 @@
 	}
 ?>
 <br /><br />
-<form name="connect_four" action="connect_four" method="post">
+<form name="game" action="connectfour" method="post">
 	<select name="move">
 		<option value="1">1</option>
 		<option value="2">2</option>
@@ -77,9 +77,6 @@
 	<input type="submit" value="submit" />
 </form>
 
-<?php // echo $moves_so_far ?>
-
-<script> //alert('dang'); </script>
 </div>
 
 
