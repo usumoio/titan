@@ -14,20 +14,20 @@
 		public $board_width 	= 7;
 		public $board_length 	= 7;
 		public $playing_ai 		= TRUE;
-		public $game_array 		= array();	
-		public $game_board		= array();	
+		//public $game_array 		= array();	
 			
-		public function apply_move($move, $active_players_move)
+		public function apply_move($move, $active_players_move, $game_array)
 		{
-			$board_for_function = $this->game_array;
+			$board_for_function = $game_array;
 			$location_of_new_pieces = 0;
+			$starting_game_board = $game_array;
 			
 			foreach($board_for_function[$move] as $column_key => $column_space)
 			{
 				// check if you are at the edge of an empty row
 				if(!array_key_exists(($location_of_new_pieces + 1), $board_for_function[$move]) && $column_space == '_')
 				{
-					$this->game_array[$move][$location_of_new_pieces] = ($active_players_move == 1) ? 'x' : 'o';
+					$game_array[$move][$location_of_new_pieces] = ($active_players_move == 1) ? 'x' : 'o';
 					break;
 				}
 				
@@ -37,22 +37,25 @@
 					// check the edge of the board to make sure that exists
 					if(array_key_exists(($location_of_new_pieces - 1), $board_for_function))
 					{
-						$this->game_array[$move][$location_of_new_pieces - 1] = ($active_players_move == 1) ? 'x' : 'o';
+						$game_array[$move][$location_of_new_pieces - 1] = ($active_players_move == 1) ? 'x' : 'o';
 						break;
 					} else {
-						echo "well fuck...1"; exit;
+						// this player made an illgal move off the board
+						return array(json_encode($starting_game_board), "That is not a legal move");
 					}
 				}
 
 				$location_of_new_pieces++;
 			}
-			
-			return json_encode($this->game_array);
+			// return board with no
+			return array(json_encode($game_array), "");
 		}	
 		
 		
 		public function build_board_from_json($json_array) 
 		{
+			$json_array = json_decode($json_array);
+			
 			$length = $this->board_length;
 			$width = $this->board_width;
 			$proxy_board = array();
@@ -66,6 +69,37 @@
 				}
 			}
 			return $proxy_board;
+		}
+		
+		
+		public function check_winner($active_players_move, $winner_declared){
+			// if the human is moving then calculate that they won if they won
+			if($active_players_move == 1)
+			{
+				if($winner_declared == 'x')
+				{
+					$winner_declared = "x";
+				}
+				
+				if($winner_declared == -1)
+				{
+					$winner_declared = "d";
+				}
+			}
+			
+			if($active_players_move == 2)
+			{
+				if($winner_declared == 'o')
+				{
+					$winner_declared = "o";
+				}
+				
+				if($winner_declared == -1)
+				{
+					$winner_declared = "d";
+				}
+			}
+			return $winner_declared;
 		}
 		
 		
@@ -184,38 +218,7 @@
 		}
 		
 		
-		public function check_winner($active_players_move, $winner_declared){
-			// if the human is moving then calculate that they won if they won
-			if($active_players_move == 1)
-			{
-				if($winner_declared == 'x')
-				{
-					$winner_declared = "x";
-				}
-				
-				if($winner_declared == -1)
-				{
-					$winner_declared = "d";
-				}
-			}
-			
-			if($active_players_move == 2)
-			{
-				if($winner_declared == 'o')
-				{
-					$winner_declared = "o";
-				}
-				
-				if($winner_declared == -1)
-				{
-					$winner_declared = "d";
-				}
-			}
-			return $winner_declared;
-		}
-		
-		
-		public function build_game_board(&$game_board) 
+		public function build_game_board($game_board) 
 		{
 			$length = $this->board_length;
 			$width = $this->board_width;	
@@ -228,6 +231,8 @@
 					$game_board[$i][$j] = '_';
 				}
 			}
+			
+			return $game_board; 
 		}
 		
 		
@@ -244,6 +249,11 @@
 		public function get_board_length()
 		{
 			return $this->board_length;
+		}
+		
+		public function get_playing_ai()
+		{
+			return $this->playing_ai;
 		}
 	}
 		

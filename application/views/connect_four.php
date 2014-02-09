@@ -1,16 +1,19 @@
 
 <div id="centering" style="text-align:center;" >
 <h2>This is the game board:</h2>
-<?php 
-	//var_dump($winner_declared);
+<?php
+	$reset = site_url('connectfour');
 
 	if($winner_declared === "x") 
 	{
 		echo "<h1>PLAYER X HAS WON!</h1>";
+		echo "<a href=\"$reset\">Play Again</a>";
 	} else if ($winner_declared === "o") {
 		echo "<h1>PLAYER O HAS WON!</h1>";		
+		echo "<a href=\"$reset\">Try Again</a>";
 	} else if ($winner_declared === "d") {
 		echo "<h1>YOU HAVE DRAWN WITH THE MACHINE</h1>";
+		echo "<a href=\"$reset\">Play Again</a>";
 	}
 ?>
 <h5>Please input your move from 1 ~ 7.</h5>
@@ -76,6 +79,8 @@
 	<input type="hidden" name="active_players_move" value="<?php echo $active_players_move ?>" />
 	<input type="submit" value="submit" />
 </form>
+
+<?php echo "<h2>$error_message</h2>";?>
 
 </div>
 
