@@ -3,7 +3,7 @@
  
 <h2>We Were Kings Once</h2>
 
-<a href="<?php echo site_url('home/connect_four') ?>">connect four</a>
+<a href="<?php echo site_url('connectfour') ?>">connect four</a>
 
 <br />
 <br />

@@ -37,7 +37,6 @@
 				// MAGIC NUMBERS are the active players!!!
 				$prime_game_board_instance = $this->apply_prime_move($q, 2, $this->game_array);
 
-				// $this->debug($prime_game_board_instance, "//Prime Game Board Instance");
 				$prime_game_board[] = $prime_game_board_instance;
 
 				// check that the prime move does not win you the game for the other player
@@ -51,8 +50,7 @@
 				}
 				
 				if($prime_game_board[$q] !== FALSE) {
-					$move_weight_array[] = $this->ai_move_helper($prime_game_board[$q], 2, 0);	
-					//$this->debug('a score aggregate should have been recorded');			
+					$move_weight_array[] = $this->ai_move_helper($prime_game_board[$q], 2, 0);				
 				} else {
 					$move_weight_array[] = FALSE;
 				}
@@ -63,12 +61,6 @@
 			for($u = 0; $u < $this->board_length; $u++)
 			{
 				if($move_weight_array[$u] !== FALSE) {
-					
-					$this->debug($move_weight_array[$u]);
-					$this->debug($move_weight_array[$u][0], "0");
-					$this->debug($move_weight_array[$u][1], "1");
-					$this->debug($move_weight_array[$u][2], "2");
-					
 					$weight_array[] = ($move_weight_array[$u][0] * 5) + ($move_weight_array[$u][1] * 2) - ($move_weight_array[$u][2] * 5); 				
 				} else {
 					$weight_array[] = FALSE;
@@ -77,10 +69,7 @@
 			
 			// TODO the start of the weight contant will need to be something better
 			$weight_constant = -1;
-			$move_to_send = 0;
-					
-			$this->debug($move_weight_array, "this is the move weight array");		
-			$this->debug($weight_array, "this is the weight array");		
+			$move_to_send = 0;		
 						
 			// based on the results of the move decided select the best move
 			for($t = 0; $t < $this->board_length; $t++) 
@@ -131,50 +120,23 @@
 			
 			unset($i);
 			
-			//$this->debug($score_agregate, "score_agregate at a level: " . $depth);
-			//$this->debug($game_boards_generated_at_this_level[0]->score_array, 'score array', 1);
 			
 			// check to see if there are more moves of if it is time to return
 			foreach($game_boards_generated_at_this_level as $game_state)
 			{
-				// if($game_state->score_array[0] >= 1)
-				// {
-					// $this->debug("index 0");
-					// $this->debug($active_player, "active player");
-					// $this->debug($game_state->score_array[0], "match", 0);
-					// $this->debug($game_state->score_array, "this is the score array", 1);
-				// }
-				// if($game_state->score_array[1] >= 1)
-				// {
-					// $this->debug("index 1");
-					// $this->debug($active_player, "active player");
-					// $this->debug($game_state->score_array[1], "match", 0);
-					// $this->debug($game_state->score_array, "this is the score array", 1);
-				// }
-				// if($game_state->score_array[2] >= 1)
-				// {
-					// $this->debug("index 2");	
-					// $this->debug($active_player, "active player");
-					// $this->debug($game_state->score_array[2], "match", 0);
-					// $this->debug($game_state->score_array, "this is the score array", 1);
-				// }
-				
 				//compute the agragate of the scores only for player two (AI)
 				if($active_player === 2)
 				{
-					// $this->debug('adding for player two');
 					//THE WAY SCORES ARE AGREGATED HERE IS WRONG
 					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[0]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];				
 					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[2];				
 				} else if($active_player === 1) {
-					// $this->debug('adding for player one');
 					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[2]; 
 					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];
 					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[0]; 
 				}
 			}
-			//$this->debug($score_agregate, "score agregate");
 			return $score_agregate;
 		}
 		
@@ -357,8 +319,6 @@
 						
 						if($count_to_win > 3)
 						{
-							// $this->debug($count_to_win, "Count to win1");
-							// $this->debug($present_possible_winner, "present winner", 0);
 							return $present_possible_winner;	// this player has won
 						} else {
 							$count_to_win = 0;
@@ -378,8 +338,6 @@
 						
 						if($count_to_win > 3)
 						{
-							// $this->debug($count_to_win, "Count to win2");
-							// $this->debug($present_possible_winner, "present winner", 0);
 							return $present_possible_winner;	// this player has won
 						} else {
 							$count_to_win = 0;
@@ -399,8 +357,6 @@
 						
 						if($count_to_win > 3)
 						{
-							// $this->debug($count_to_win, "Count to win3");
-							// $this->debug($present_possible_winner, "present winner", 0);
 							return $present_possible_winner;	// this player has won
 						} else {
 							$count_to_win = 0;
@@ -420,8 +376,6 @@
 						
 						if($count_to_win > 3)
 						{
-							// $this->debug($count_to_win, "Count to win4");
-							// $this->debug($present_possible_winner, "present winner", 0);
 							return $present_possible_winner;	// this player has won
 						} else {
 							$count_to_win = 0;
