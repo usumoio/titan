@@ -16,12 +16,14 @@
 		public $game_array 		= array();
 		public $depth_limit 	= 5;
 		
+		
 		public function ai_player_move($game_array, $active_players_move)
 		{
 			$this->game_array = $game_array;			
 			$this->game_array = $this->calculate_ai_move($active_players_move);
 			return $this->game_array;	
 		}
+		
 		
 		public function calculate_ai_move($active_players_move)
 		{

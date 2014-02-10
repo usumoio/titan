@@ -75,9 +75,7 @@
 					if($playing_ai && !($winner_declared == -1 || $winner_declared === "x") && !$illegal_move)
 					{		
 						$active_players_move 	= ($active_players_move == 1) ? 2 : 1;
-						
 						$game_array 			= $this->greedyengine->ai_player_move($game_array, $active_players_move);
-						
 						$json_game_board 		= json_encode($game_array);
 						$moves_so_far 			= $moves_so_far + 1;
 						

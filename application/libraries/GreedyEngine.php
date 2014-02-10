@@ -14,194 +14,202 @@
 		public $board_width 	= 7;
 		public $board_length	= 7;
 		public $game_array 		= array();
-		public $depth_limit 	= 5;
+		public $depth_limit 	= 3;
 		
-		public function ai_player_move($game_array, $active_players_move)
+		public function ai_player_move($game_array)
 		{
+			//$this->debug($game_array); exit;
+			
 			$this->game_array = $game_array;			
-			$this->game_array = $this->calculate_ai_move($active_players_move);
+			$this->game_array = $this->calculate_ai_move();
 			return $this->game_array;	
 		}
 		
-		public function calculate_ai_move($active_players_move)
-		{
-			$move_weight_array 			= array();
-			$prime_game_board 			= array();
-			$prime_game_board_instance 	= NULL;
-			$weight_array 				= array();
-			$selected_move 				= NULL;
-					
-			// we hardcast the active player because at this point we know it is the AI
-			// here we also have to prime the move computer
-			for($q = 0; $q < $this->board_length; $q++)
-			{
-				// MAGIC NUMBERS are the active players!!!
-				$prime_game_board_instance = $this->apply_prime_move($q, 2, $this->game_array);
-
-				$prime_game_board[] = $prime_game_board_instance;
-
-				// check that the prime move does not win you the game for the other player
-				$winner_detected = $this->check_for_winner_or_draw($prime_game_board[$q], 2);
-				
-				// TODO figure out what to do in the draw case
-				if($winner_detected === 'o') 
-				{
-					return $prime_game_board[$q];
-				}
-				
-				if($prime_game_board[$q] !== FALSE) {
-					$move_weight_array[] = $this->ai_move_helper($prime_game_board[$q], 2, 0);				
-				} else {
-					$move_weight_array[] = FALSE;
-				}
-			}
-			unset($q);
-			
-			//choose your move based on the wieghted average all your progress
-			for($u = 0; $u < $this->board_length; $u++)
-			{
-				if($move_weight_array[$u] !== FALSE) {
-					$weight_array[] = ($move_weight_array[$u][0] * 5) + ($move_weight_array[$u][1] * 2) - ($move_weight_array[$u][2] * 5); 				
-				} else {
-					$weight_array[] = FALSE;
-				}		
-			}
-			
-			// TODO the start of the weight contant will need to be something better
-			$weight_constant = -1;
-			$move_to_send = 0;		
-						
-			// based on the results of the move decided select the best move
-			for($t = 0; $t < $this->board_length; $t++) 
-			{		
-				if($weight_array[$t] !== FALSE) {
-					// equality here is a to avoid states here every move is equal, I think?
-					if($weight_constant <= $weight_array[$t])
-					{
-						$weight_constant = $weight_array[$t];
-						$move_to_send = $t;
-					}
-				} 
-			}
-			
-			return $prime_game_board[$move_to_send];
-		}
 		
-		public function ai_move_helper($game_board, $active_player, $depth)
+		// this returns the game board after the ai players move
+		public function calculate_ai_move() 
 		{
-			// build the object that will be needed at this level of recusion
-			$depth = $depth + 1;
-			$score_object 								= new stdClass;
-			$move_array 								= array();
-			$game_boards_generated_at_this_level 		= array(); 
-			$new_game_boards_generated_at_this_level 	= array();
-			$return_end_state_detected					= 0;
-			$score_agregate								= array(); 			
+			$win 			= $this->win($this->game_array);
+			$winning_move 	= array();
 			
-			if($this->depth_limit < $depth)
+			if($win) 
 			{
-				$score_agregate[0] = 0; 
-				$score_agregate[1] = 0;
-				$score_agregate[2] = 0;
-				return $score_agregate; 
+				return $win;
 			}
-			
-			$active_player = ($active_player == 1) ? 2 : 1;
-			
-			// check for possible moves
-			for($i=0; $i < $this->board_width; $i++)
+		
+		
+			$block_loss = $this->block_loss($this->game_array);
+		
+			for($i = 0; $i < $this->board_width; $i++) 
 			{	
-				// calculate all of the possible recusions (all of the next moves)
-				$game_boards_generated_at_this_level[$i] = $this->apply_ai_move($i, $active_player, $game_board);
+				//$this->debug($block_loss); exit;
 				
-				// this is the recusive level
-				$score_agregate = $this->ai_move_helper($game_boards_generated_at_this_level[$i]->game_board, $active_player, $depth);				
-			}
-			
-			unset($i);
-			
-			
-			// check to see if there are more moves of if it is time to return
-			foreach($game_boards_generated_at_this_level as $game_state)
-			{
-				//compute the agragate of the scores only for player two (AI)
-				if($active_player === 2)
+				if(!array_key_exists($i, $block_loss))
 				{
-					//THE WAY SCORES ARE AGREGATED HERE IS WRONG
-					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[0]; 
-					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];				
-					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[2];				
-				} else if($active_player === 1) {
-					$score_agregate[0] = $score_agregate[0] + $game_state->score_array[2]; 
-					$score_agregate[1] = $score_agregate[1] + $game_state->score_array[1];
-					$score_agregate[2] = $score_agregate[2] + $game_state->score_array[0]; 
+					$move_ahead = $this->move_ahead($this->game_array);	
+					
+					foreach($move_ahead as $key => $check_win)
+					{
+						if($check_win)
+						{
+							list($winning_move, $message) = $this->apply_move($key, 2, $this->game_array);
+							return $winning_move; 
+						}
+					}				
 				}
 			}
-			return $score_agregate;
+		
+			while(TRUE)
+			{
+				$move  = rand(0, 6);
+				
+				if(!array_key_exists($move, $block_loss)) 
+				{
+					list($game_board, $error_message) = $this->apply_move($move, 2, $this->game_array);
+					return $game_board;	
+				}	
+			}
 		}
 		
-		public function apply_ai_move($move, $active_players_move, $board_to_use)
+		
+		
+		
+		
+		public function win($game_board) 
 		{
-			$board_for_function		= array();
-			$location_of_new_pieces = 0;
-			$return_object 			= new stdClass;
 			
-			// this makes sure that this function is being called with the right board
-			if(!empty($board_to_use))
-			{
-				$board_for_function = $board_to_use;
-			} else {
-				$board_for_function = $this->game_array;
-			}
+			$error_message 	= '';
+			$active_player 	= 2;
 			
-			// check if there is no point in applying this move, because a player has already won
-			$test_for_complete = $this->check_for_winner_or_draw($board_for_function, $active_players_move);
-
-			if(($test_for_complete == -1) || ($test_for_complete === 'x') || ($test_for_complete === 'o'))
+			for($i = 0; $i < $this->board_width; $i++)
 			{
-				$return_object->game_board = $board_to_use;
-				if($active_players_move === 1)
+				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
+				
+				$win_value = $this->check_for_winner_or_draw($board);
+			
+				if(($win_value == 'o') && (!$error_message)) 
 				{
-					if($test_for_complete === -1) 
-					{
-						$return_object->score_array = array(0, 1, 0);
-					} else if($test_for_complete === 'x'){
-						$dump_test = 1;						
-						$return_object->score_array = array(0, 0, 1);
-					} else {
-						$return_object->score_array = array(0, 0, 0);						
-					}
-				} else if($active_players_move === 2) {
-					if($test_for_complete === -1) 
-					{
-						$return_object->score_array = array(0, 1, 0);
-					} else if($test_for_complete === 'o'){
-						$return_object->score_array = array(1, 0, 0);
-					} else {						
-						$return_object->score_array = array(0, 0, 0);						
-					}
-				} else {
-					$this->debug('fuck', '', 1);
+					return $game_board;	
 				}
-								
-				return $return_object;
 			}
 			
-			// check that this move is possible
-			if(!$this->move_possible($move, $board_for_function))
+			return FALSE;
+		}
+		
+		
+		public function block_loss($game_board) 
+		{
+			$active_player			= 2;
+			$board					= array();
+			$board_human			= array();
+			$error_message			= ""; 
+			$error_message_human	= "";
+			$must_not_move_list		= array();
+			$loss					= FALSE;
+			$win_value 				= "";
+			
+			for($i = 0; $i < $this->board_width; $i++)
 			{
-				$return_object->game_board 		= $board_for_function;
-				$return_object->score_array 	= array(0, 0, 0);
-				return $return_object;
+				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
+				
+				// switch the active player
+				$active_player = ($active_player == 2) ? 1 : 2;
+				
+				if($this->board_full($game_board, $active_player))
+				{
+					return $game_board;
+				}
+				
+				//make a counter move and see if anywhere beats the AI
+				for($j = 0; $j < $this->board_width; $j++)
+				{
+					if(!$error_message) 
+					{
+						list($board_human, $error_message_human) = $this->apply_move($j, $active_player, $board);					
+					}
+					
+					$win_value = $this->check_for_winner_or_draw($board_human);
+					
+					if(($win_value == 'x' ) && (!$error_message_human)) 
+					{
+						$must_not_move_list[$i] = TRUE; 
+					} 
+				}
 			}
 			
-			// this part of the function applies a valid move
+			return $must_not_move_list;
+		}
+		
+		
+		public function move_ahead($game_board) 
+		{
+			$active_player			= 2;
+			$board					= array();
+			$board_ai_2				= array();
+			$board_human			= array();
+			$error_message			= ""; 
+			$error_message_ai_2		= ""; 
+			$error_message_human	= "";
+			$must_move_list			= array();
+			$loss					= FALSE;
+			$win_value				= "";
+			
+			for($i = 0; $i < $this->board_width; $i++)
+			{
+				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
+				
+				// switch the active player
+				$active_player = ($active_player == 2) ? 1 : 2;
+				
+				if($this->board_full($game_board, $active_player))
+				{
+					return $game_board;
+				}
+				
+				//make a counter move and see if anywhere beats the AI
+				for($j = 0; $j < $this->board_width; $j++)
+				{
+					if(!$error_message) 
+					{
+						list($board_human, $error_message_human) = $this->apply_move($j, $active_player, $board);					
+					}
+					
+					// switch the active player
+					$active_player = ($active_player == 2) ? 1 : 2;
+					
+					//make a counter move and see if anywhere beats the AI
+					for($k = 0; $k < $this->board_width; $k++)
+					{
+						if(!$error_message) 
+						{
+							list($board_ai_2, $error_message_ai_2) = $this->apply_move($k, $active_player, $board_human);					
+						}
+						
+						$win_value = $this->check_for_winner_or_draw($board_ai_2);
+						
+						if(($win_value == 'o' ) && (!$error_message_ai_2)) 
+						{
+							$must_move_list[$i] = TRUE; 
+						} 
+					}	
+				}
+			}
+			return $must_move_list;
+		}
+
+
+		public function apply_move($move, $active_players_move, $game_array) 
+		{
+			$board_for_function 		= $game_array;
+			$starting_game_board 		= $game_array;
+			$location_of_new_pieces 	= 0;
+			
 			foreach($board_for_function[$move] as $column_key => $column_space)
 			{
 				// check if you are at the edge of an empty row
 				if(!array_key_exists(($location_of_new_pieces + 1), $board_for_function[$move]) && $column_space == '_')
 				{
-					$board_for_function[$move][$location_of_new_pieces] = ($active_players_move == 1) ? 'x' : 'o';
+					$game_array[$move][$location_of_new_pieces] = ($active_players_move == 1) ? 'x' : 'o';
 					break;
 				}
 				
@@ -211,87 +219,23 @@
 					// check the edge of the board to make sure that exists
 					if(array_key_exists(($location_of_new_pieces - 1), $board_for_function))
 					{
-						$board_for_function[$move][$location_of_new_pieces - 1] = ($active_players_move == 1) ? 'x' : 'o';
+						$game_array[$move][$location_of_new_pieces - 1] = ($active_players_move == 1) ? 'x' : 'o';
 						break;
 					} else {
-						echo "well fuck...2"; exit;
+						// this player made an illgal move off the board
+						return array($starting_game_board, "That is not a legal move");
 					}
 				}
 
 				$location_of_new_pieces++;
 			}
-			
-			$return_object->game_board = $board_for_function;
-			
-			// now check if this state is a win loss or draw
-			$test_for_complete = $this->check_for_winner_or_draw($board_for_function, $active_players_move);
-			
-			// this is a draw
-			if($test_for_complete === -1)
-			{
-				$return_object->score_array = array(0, 1, 0);
-			} else if($test_for_complete === 'o') {
-				$return_object->score_array = array(1, 0, 0);
-			} else if($test_for_complete === 'x') {
-				$return_object->score_array = array(0, 0, 1);
-			} else {
-				$return_object->score_array = array(0, 0, 0);
-			}
-			
-			return $return_object;
+			// return board with no errors
+			return array($game_array, "");
 		}
-		
-		// TODO apply prime move needs to also check for a winner
-		public function apply_prime_move($move, $active_players_move, $board_to_use)
-		{
-			$location_of_new_pieces = 0;
-			
-			// check if the prime move to be applied is possible and if not then move elsewhere
-			if(!$this->move_possible($move, $board_to_use)) {
-				return FALSE;
-			}
-			
-			foreach($board_to_use[$move] as $column_key => $column_space)
-			{
-				// check if you are at the edge of an empty row
-				if(!array_key_exists(($location_of_new_pieces + 1), $board_to_use[$move]) && $column_space === '_')
-				{
-					$board_to_use[$move][$location_of_new_pieces] = ($active_players_move === 1) ? 'x' : 'o';
-					break;
-				}
-				
-				// check if the next place has stuff in it too
-				if($column_space != '_')
-				{
-					// check the edge of the board to make sure that exists
-					if(array_key_exists(($location_of_new_pieces - 1), $board_to_use))
-					{
-						$board_to_use[$move][$location_of_new_pieces - 1] = ($active_players_move === 1) ? 'x' : 'o';
-						break;
-					} else {
-						echo "well fuck...3"; exit;
-					}
-				}
 
-				$location_of_new_pieces++;
-			}
-			
-			return $board_to_use;
-		}
-		
-		public function move_possible($move, $game_board)
-		{
-			// check that this move is not going to fall out of the board
-			if($game_board[$move][0] !== "_")
-			{
-				return FALSE;
-			} else {
-				return TRUE;
-			}
-		}
-		
-		
-		public function check_for_winner_or_draw($game_array, $active_player_move)
+
+		// return x if x wins o if o wins and draw for a draw none for no winner
+		public function check_for_winner_or_draw($game_array)
 		{
 			$present_possible_winner 	= "";
 			$count_to_win 				= 0;
@@ -399,11 +343,12 @@
 			
 			if(!$game_not_a_draw)
 			{
-				return -1;
+				return 'draw';
 			}
 			
-			return 0;
+			return 'none';
 		}
+
 
 		function debug($value = NULL, $name = NULL, $exit = NULL)
 		{
@@ -421,7 +366,31 @@
 			}
 		}
 			
-		
+			
+		// check if the board is full
+		public function board_full($game_board, $active_player)
+		{
+			$error_message = '';
+			$spot_count = 0;
+			
+			for($i = 0; $i < $this->board_width; $i++)
+			{
+				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
+				
+				if($error_message) 
+				{
+					$spot_count = $spot_count + 1;	
+				}
+			}
+			
+			// this means that the board is full
+			if($spot_count == 7) 
+			{
+				return TRUE;	
+			}
+			
+			return FALSE;
+		}
 	}
 
 ?>
