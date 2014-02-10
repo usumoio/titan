@@ -18,8 +18,6 @@
 		
 		public function ai_player_move($game_array)
 		{
-			//$this->debug($game_array); exit;
-			
 			$this->game_array = $game_array;			
 			$this->game_array = $this->calculate_ai_move();
 			return $this->game_array;	
@@ -37,13 +35,10 @@
 				return $win;
 			}
 		
-		
 			$block_loss = $this->block_loss($this->game_array);
 		
 			for($i = 0; $i < $this->board_width; $i++) 
 			{	
-				//$this->debug($block_loss); exit;
-				
 				if(!array_key_exists($i, $block_loss))
 				{
 					$move_ahead = $this->move_ahead($this->game_array);	
@@ -85,11 +80,16 @@
 			{
 				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
 				
-				$win_value = $this->check_for_winner_or_draw($board);
+				if(!$error_message)
+				{	
+					$win_value = $this->check_for_winner_or_draw($board);				
+				} else {
+					return FALSE;
+				}
 			
 				if(($win_value == 'o') && (!$error_message)) 
 				{
-					return $game_board;	
+					return $board;	
 				}
 			}
 			
@@ -115,7 +115,7 @@
 				// switch the active player
 				$active_player = ($active_player == 2) ? 1 : 2;
 				
-				if($this->board_full($game_board, $active_player))
+				if($this->board_full($board, $active_player))
 				{
 					return $game_board;
 				}
@@ -126,13 +126,16 @@
 					if(!$error_message) 
 					{
 						list($board_human, $error_message_human) = $this->apply_move($j, $active_player, $board);					
-					}
 					
-					$win_value = $this->check_for_winner_or_draw($board_human);
-					
-					if(($win_value == 'x' ) && (!$error_message_human)) 
-					{
-						$must_not_move_list[$i] = TRUE; 
+						if(!$error_message_human)
+						{
+							$win_value = $this->check_for_winner_or_draw($board_human);					
+						}
+				
+						if(($win_value == 'x' ) && (!$error_message_human)) 
+						{
+							$must_not_move_list[$i] = TRUE; 
+						} 
 					} 
 				}
 			}
@@ -183,14 +186,17 @@
 						if(!$error_message) 
 						{
 							list($board_ai_2, $error_message_ai_2) = $this->apply_move($k, $active_player, $board_human);					
+						
+							if(!$error_message_ai_2)
+							{
+								$win_value = $this->check_for_winner_or_draw($board_ai_2);						
+							}
+							
+							if(($win_value == 'o' ) && (!$error_message_ai_2)) 
+							{
+								$must_move_list[$i] = TRUE; 
+							} 
 						}
-						
-						$win_value = $this->check_for_winner_or_draw($board_ai_2);
-						
-						if(($win_value == 'o' ) && (!$error_message_ai_2)) 
-						{
-							$must_move_list[$i] = TRUE; 
-						} 
 					}	
 				}
 			}
