@@ -29,11 +29,14 @@
 		{
 			$win 			= $this->win($this->game_array);
 			$winning_move 	= array();
+			$move_on_loss	= NULL;
 			
 			if($win) 
 			{
 				return $win;
 			}
+		
+			$move_on_loss = $this->move_on_loss($this->game_array);
 		
 			$block_loss = $this->block_loss($this->game_array);
 		
@@ -54,20 +57,50 @@
 				}
 			}
 		
-			while(TRUE)
+			if (is_null($move_on_loss)) 
 			{
-				$move  = rand(0, 6);
-				
-				if(!array_key_exists($move, $block_loss)) 
+				while(TRUE)
 				{
-					list($game_board, $error_message) = $this->apply_move($move, 2, $this->game_array);
-					return $game_board;	
-				}	
+					$move  = rand(0, 6);
+					
+					//TODO this does not stop illegal moves
+					if(!array_key_exists($move, $block_loss)) 
+					{
+						list($game_board, $error_message) = $this->apply_move($move, 2, $this->game_array);
+						return $game_board;	
+					}
+				}
+			} else {
+				list($game_board, $error_message) = $this->apply_move($move_on_loss, 2, $this->game_array);
+				return $game_board;	
 			}
 		}
 		
 		
-		
+		public function move_on_loss($game_board)
+		{
+			$error_message 	= '';
+			$active_player 	= 1;
+			
+			for($i = 0; $i < $this->board_width; $i++)
+			{
+				list($board, $error_message) = $this->apply_move($i, $active_player, $game_board);
+				
+				if(!$error_message)
+				{	
+					$win_value = $this->check_for_winner_or_draw($board);				
+				} else {
+					return FALSE;
+				}
+			
+				if(($win_value == 'x') && (!$error_message)) 
+				{
+					return $i;	
+				}
+			}
+			
+			return NULL;
+		}
 		
 		
 		public function win($game_board) 
